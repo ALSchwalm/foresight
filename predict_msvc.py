@@ -34,7 +34,7 @@ def predict_state(values, a, c, m, masked_bits):
             candidates.append(possible_state)
     return candidates
 
-def generate_values(prev_values, a, c, m, masked_bits):
+def generate_values(prev_values, a, c, m, masked_bits, noexcept=False):
     '''
     Generate a list of values from a linear congruential algorithm.
 
@@ -43,13 +43,20 @@ def generate_values(prev_values, a, c, m, masked_bits):
     @param c: The increment
     @param m: The modulus value
     @param masked_bits: The number of lower order bits to drop
+    @param noexcept: If True, return None instead of raising an exception
     '''
     state = predict_state(prev_values, a, c, m, masked_bits)
 
     if len(state) > 1:
-        raise RuntimeError("Unable to find a unique internal state. Not enough values.")
+        if noexcept:
+            yield None
+        else:
+            raise RuntimeError("Unable to find a unique internal state. Not enough values.")
     elif len(state) == 0:
-        raise RuntimeError("No viable candidate found. Some values may not be consecutive.")
+        if noexcept:
+            yield None
+        else:
+            raise RuntimeError("No viable candidate found. Some values may not be consecutive.")
 
     state = state[0]
     while(True):
