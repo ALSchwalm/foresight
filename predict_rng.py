@@ -2,37 +2,51 @@
 Predict RNG
 
 Usage:
-  predict_rng msvc rand <count> <output>...
-  predict_rng glibc (rand|random|rand_r) <count> <output>...
-  predict_rng lcg <multiplier> <increment> <modulus> <bitshift> <count> <output>...
+  predict_rng msvc rand <count> (--seed=<seed> | <output>...)
+  predict_rng glibc (rand|random|rand_r) <count> (--seed=<seed> | <output>...)
+  predict_rng lcg <multiplier> <increment> <modulus> <bitshift> <count> (--seed=<seed> | <output>...)
 """
 
 from docopt import docopt
 from predrng import lcg
 from itertools import islice
 
-def handle_msvc(args, outputs):
+def handle_msvc(args, count, outputs):
     if args["rand"]:
-        for i in islice(lcg.generate_values(outputs), 0, int(args["<count>"])):
-            print(i)
+        if args["--seed"]:
+            seed = int(args["--seed"])
+            for value in islice(lcg.generate_from_seed(seed), 0, count):
+                print(value)
+        else:
+            for value in islice(lcg.generate_from_outputs(outputs), 0, count):
+                print(value)
 
-def handle_lcg(args, outputs):
+def handle_lcg(args, count, outputs):
     a=int(args["<multiplier>"])
     c=int(args["<increment>"])
     m=int(args["<modulus>"])
     bitshift=int(args["<bitshift>"])
-    for i in islice(lcg.generate_values(outputs, a, c, m, bitshift),
-                    0, int(args["<count>"])):
-        print(i)
+    if args["--seed"]:
+        seed = int(args["--seed"])
+        for value in islice(lcg.generate_from_seed(seed, a, c, m, bitshift), 0, count):
+            print(value)
+    else:
+        for value in islice(lcg.generate_from_outputs(outputs, a, c, m, bitshift), 0, count):
+            print(value)
+
 
 def main():
     args = docopt(__doc__)
-    outputs = [int(output) for output in args["<output>"]]
 
+    outputs = None
+    if args["<output>"]:
+        outputs = [int(output) for output in args["<output>"]]
+
+    count = int(args["<count>"])
     if args["msvc"]:
-        handle_msvc(args, outputs)
+        handle_msvc(args, count, outputs)
     elif args["lcg"]:
-        handle_lcg(args, outputs)
+        handle_lcg(args, count, outputs)
 
 if __name__ == "__main__":
     main()
