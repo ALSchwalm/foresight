@@ -24,18 +24,10 @@ def predict_state(values):
             assert(value.value == predicted_value)
 
         if value.value == predicted_value:
-            values[i-3].lsb = 0
-            values[i-3].uncertain = False
-            values[i-31].lsb = 0
-            values[i-31].uncertain = False
-        elif value.value == predicted_value+1:
-            if not values[i-31].uncertain:
-                values[i-3].lsb = not values[i-31].lsb
+            if not values[i-31].uncertain and values[i-31].lsb:
+                values[i-3].lsb = 0
                 values[i-3].uncertain = False
-            else:
-                # this can be wrong
-                values[i-3].lsb = not values[i-31].lsb
-        elif value.value == predicted_value+2:
+        elif value.value == predicted_value+1:
             values[i-3].lsb = 1
             values[i-3].uncertain = False
             values[i-31].lsb = 1
