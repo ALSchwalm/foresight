@@ -12,6 +12,7 @@ def next_lcg(state, a, c, m, masked_bits):
     '''
     return ((a * state + c) % m) >> masked_bits
 
+
 def predict_state(values, a, c, m, masked_bits):
     '''
     Given a list of values from a LCG, predict the internal state
@@ -31,6 +32,7 @@ def predict_state(values, a, c, m, masked_bits):
             candidates.append(possible_state)
     return candidates
 
+
 def generate_values(state, a, c, m, masked_bits):
     '''
     Generate a list of values from a linear congruential algorithm.
@@ -46,6 +48,7 @@ def generate_values(state, a, c, m, masked_bits):
         state = next_lcg(state, a, c, m, masked_bits=0)
         yield state >> masked_bits
 
+
 def generate_from_seed(seed, a=214013, c=2531011, m=2**31, masked_bits=16):
     '''
     Create a continuation that yields random values from an LCG with the given parameters,
@@ -53,7 +56,9 @@ def generate_from_seed(seed, a=214013, c=2531011, m=2**31, masked_bits=16):
     '''
     yield from generate_values(seed, a, c, m, masked_bits)
 
-def generate_from_outputs(prev_values, a=214013, c=2531011, m=2**31, masked_bits=16, noexcept=False):
+
+def generate_from_outputs(prev_values, a=214013, c=2531011, m=2**31,
+                          masked_bits=16, noexcept=False):
     '''
     Create a continuation that yields random values from an LCG with the given parameters,
     recovering the state from the given list of values. Defaults to MSVC constants.
