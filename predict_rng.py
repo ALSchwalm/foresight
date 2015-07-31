@@ -41,8 +41,13 @@ def handle_lcg(args, count, outputs):
 
 
 def handle_glibc(args, count, outputs):
-    for value in islice(glibc.random.generate_from_outputs(outputs), 0, count):
-        print(value)
+    if args["--seed"]:
+        seed = int(args["--seed"])
+        for value in islice(glibc.random.generate_from_seed(seed), 0, count):
+            print(value)
+    else:
+        for value in islice(glibc.random.generate_from_outputs(outputs), 0, count):
+            print(value)
 
 
 def main():

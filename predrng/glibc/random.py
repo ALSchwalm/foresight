@@ -1,3 +1,8 @@
+
+# Credit to http://www.mathstat.dal.ca/~selinger/random/ for a
+# concise explanation of this algorithm
+
+
 class State(object):
     def __init__(self, value, lsb):
         self.value = value
@@ -36,17 +41,18 @@ def predict_state(values):
             # Sanity check
             assert(False)
 
-    for v in values[i-34:i-3]:
+    for v in values[-38:-4]:
         if v.uncertain:
-            raise RuntimeError("Unable to find a unique internal state. Not enough values.")
-    else:
-        return [v.predicted() for v in values[i-34:i-3]]
+            print("\nWarning: Unable to recover all internal state (not enough outputs).")
+            print("Some predictions my be incorrect.\n")
+            break
+    return [v.predicted() for v in values[-38:-4]]
 
 
 def generate_values(state):
     while(True):
-        predicted_value = state[28]
-        predicted_value += state[0]
+        predicted_value = state[31]
+        predicted_value += state[3]
         predicted_value = predicted_value % 2**32
         state = state[1:] + [predicted_value]
         yield predicted_value >> 1
@@ -56,5 +62,16 @@ def generate_from_outputs(prev_values):
     state = predict_state(prev_values)
     gen = generate_values(state)
     for _ in range(4):
+        next(gen)
+    yield from gen
+
+
+def generate_from_seed(seed):
+    state = [seed]
+    for i in range(1, 31):
+        state.append((16807 * state[i-1]) % (2**31-1))
+    state += state[0:3]
+    gen = generate_values(state)
+    for _ in range(310):
         next(gen)
     yield from gen
