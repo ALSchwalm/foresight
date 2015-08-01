@@ -9,7 +9,7 @@ Usage:
 
 from docopt import docopt
 from predrng import lcg, glibc
-from predrng.glibc import random
+from predrng.glibc import random, rand_r
 from itertools import islice
 
 
@@ -41,13 +41,22 @@ def handle_lcg(args, count, outputs):
 
 
 def handle_glibc(args, count, outputs):
-    if args["--seed"]:
-        seed = int(args["--seed"])
-        for value in islice(glibc.random.generate_from_seed(seed), 0, count):
-            print(value)
-    else:
-        for value in islice(glibc.random.generate_from_outputs(outputs), 0, count):
-            print(value)
+    if args["rand"] or args["random"]:
+        if args["--seed"]:
+            seed = int(args["--seed"])
+            for value in islice(glibc.random.generate_from_seed(seed), 0, count):
+                print(value)
+        else:
+            for value in islice(glibc.random.generate_from_outputs(outputs), 0, count):
+                print(value)
+    elif args["rand_r"]:
+        if args["--seed"]:
+            seed = int(args["--seed"])
+            for value in islice(glibc.rand_r.generate_from_seed(seed), 0, count):
+                print(value)
+        else:
+            for value in islice(glibc.rand_r.generate_from_outputs(outputs), 0, count):
+                print(value)
 
 
 def main():
