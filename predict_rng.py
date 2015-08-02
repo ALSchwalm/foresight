@@ -2,9 +2,10 @@
 
 import argparse
 from textwrap import dedent
-from predrng import lcg, glibc, php
+from predrng import lcg, glibc, php, java
 from predrng.glibc import random, rand_r
 from predrng.php import rand
+from predrng.java import nextInt
 from itertools import islice
 
 
@@ -18,8 +19,17 @@ def handle_msvc(args):
         if args.seed:
             print_from_gen(lcg.generate_from_seed(args.seed), args.count)
         else:
-            print("here")
             print_from_gen(lcg.generate_from_outputs(args.outputs), args.count)
+
+
+def handle_java(args):
+    if args.function in ("nextInt",):
+        if args.seed:
+            print_from_gen(java.nextInt.generate_from_seed(args.seed),
+                           args.count)
+        else:
+            print_from_gen(java.nextInt.generate_from_outputs(args.outputs),
+                           args.count)
 
 
 def handle_lcg(args):
@@ -40,22 +50,28 @@ def handle_lcg(args):
 def handle_glibc(args):
     if args.function in ("rand", "random"):
         if args.seed:
-            print_from_gen(glibc.random.generate_from_seed(args.seed), args.count)
+            print_from_gen(glibc.random.generate_from_seed(args.seed),
+                           args.count)
         else:
-            print_from_gen(glibc.random.generate_from_outputs(args.outputs), args.count)
+            print_from_gen(glibc.random.generate_from_outputs(args.outputs),
+                           args.count)
     elif args.function == "rand_r":
         if args.seed:
-            print_from_gen(glibc.rand_r.generate_from_seed(args.seed), args.count)
+            print_from_gen(glibc.rand_r.generate_from_seed(args.seed),
+                           args.count)
         else:
-            print_from_gen(glibc.rand_r.generate_from_outputs(args.outputs), args.count)
+            print_from_gen(glibc.rand_r.generate_from_outputs(args.outputs),
+                           args.count)
 
 
 def handle_php(args):
     if args.function == "rand":
         if args.seed:
-            print_from_gen(php.rand.generate_from_seed(args.seed, args.platform), args.count)
+            print_from_gen(php.rand.generate_from_seed(args.seed, args.platform),
+                           args.count)
         else:
-            print_from_gen(php.rand.generate_from_outputs(args.outputs, args.platform), args.count)
+            print_from_gen(php.rand.generate_from_outputs(args.outputs, args.platform),
+                           args.count)
 
 def add_basic_configuration(parser):
     parser.add_argument("count", type=int,
@@ -89,6 +105,13 @@ def setup_php_parser(sp):
     add_basic_configuration(sp_php)
 
 
+def setup_java_parser(sp):
+    sp_java = sp.add_parser("java", help="Predict outputs from java.util.Random")
+    sp_java.add_argument('function', choices=('nextInt',),
+                         help="Source of outputs")
+    add_basic_configuration(sp_java)
+
+
 def setup_lcg_parser(sp):
     sp_lcg = sp.add_parser("lcg", help="Predict outputs from an arbitrary linear congruential generator",
                            formatter_class=argparse.RawTextHelpFormatter,
@@ -111,8 +134,8 @@ def main():
     parser = argparse.ArgumentParser(prog='predict_rng', description="""
     Given outputs from a random number generator (glibc's rand_r, PHP rand, etc),
     predict_rng predicts the future outputs. Alternately, predict_rng can
-    be passed the seed, which will be used to produce same values that would
-    be returned from the random number generator.""",
+    be passed the seed, which will be used to produce the same values that
+    would be returned from the random number generator.""",
                                      epilog="See additional help for a command with: predict_rng <command> -h")
 
     parser.add_argument("-m", "--modulo", type=int, nargs=1,
@@ -125,6 +148,7 @@ def main():
     setup_glibc_parser(sp)
     setup_msvc_parser(sp)
     setup_php_parser(sp)
+    setup_java_parser(sp)
     setup_lcg_parser(sp)
 
     ns = parser.parse_args()
@@ -138,6 +162,8 @@ def main():
         handle_msvc(ns)
     elif ns.command == "php":
         handle_php(ns)
+    elif ns.command == "java":
+        handle_java(ns)
     elif ns.command == "lcg":
         handle_lcg(ns)
 
