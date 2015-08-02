@@ -5,7 +5,7 @@ from textwrap import dedent
 from predrng import lcg, glibc, php, java
 from predrng.glibc import random, rand_r
 from predrng.php import rand
-from predrng.java import nextInt
+from predrng.java import nextInt, nextLong
 from itertools import islice
 
 
@@ -23,12 +23,19 @@ def handle_msvc(args):
 
 
 def handle_java(args):
-    if args.function in ("nextInt",):
+    if args.function == "nextInt":
         if args.seed:
             print_from_gen(java.nextInt.generate_from_seed(args.seed),
                            args.count)
         else:
             print_from_gen(java.nextInt.generate_from_outputs(args.outputs),
+                           args.count)
+    elif args.function == "nextLong":
+        if args.seed:
+            print_from_gen(java.nextLong.generate_from_seed(args.seed),
+                           args.count)
+        else:
+            print_from_gen(java.nextLong.generate_from_outputs(args.outputs),
                            args.count)
 
 
@@ -107,7 +114,7 @@ def setup_php_parser(sp):
 
 def setup_java_parser(sp):
     sp_java = sp.add_parser("java", help="Predict outputs from java.util.Random")
-    sp_java.add_argument('function', choices=('nextInt',),
+    sp_java.add_argument('function', choices=('nextInt', 'nextLong'),
                          help="Source of outputs")
     add_basic_configuration(sp_java)
 
