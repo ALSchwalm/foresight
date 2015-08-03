@@ -163,7 +163,8 @@ def main():
     parser.add_argument("-m", "--modulo", type=int, nargs=1,
                         help="Output values modulo this number", metavar="MOD")
 
-    sp = parser.add_subparsers(dest="command")
+    sp = parser.add_subparsers(dest="command", title="Valid Commands")
+    sp.required = True
     sp.metavar = 'command'
 
     # Setup sub parsers
