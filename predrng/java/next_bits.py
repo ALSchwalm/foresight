@@ -23,9 +23,9 @@ def generate_values(state, bits):
                               25214903917,
                               11,
                               281474976710656,
-                              16)
+                              0)
     while True:
-        yield next(gen) & ((1 << bits) - 1)
+        yield next(gen) >> (48 - bits)
 
 
 def generate_from_seed(seed, bits):
@@ -34,9 +34,9 @@ def generate_from_seed(seed, bits):
                                  25214903917,
                                  11,
                                  281474976710656,
-                                 16)
+                                 0)
     while True:
-        yield next(gen) & ((1 << bits) - 1)
+        yield next(gen) >> (48 - bits)
 
 
 def generate_from_outputs(outputs, bits):

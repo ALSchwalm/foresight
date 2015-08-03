@@ -7,11 +7,8 @@ from itertools import combinations
 def generate_from_seed(seed):
     gen = java.next_bits.generate_from_seed(seed, 32)
     while True:
-        high = next(gen)
-        num = c_long(high << 32).value
-        low = next(gen)
-        num += c_int(low).value
-        print(high, low)
+        num = c_long(next(gen) << 32).value
+        num += c_int(next(gen)).value
         yield c_long(num).value
 
 
