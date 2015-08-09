@@ -1,4 +1,4 @@
-from ctypes import c_int, c_long
+from ctypes import c_int, c_long, c_ulong
 from predrng import java
 from predrng.java import next_bits
 from itertools import combinations
@@ -15,6 +15,7 @@ def generate_from_seed(seed):
 def generate_from_outputs(outputs):
     extracted_outputs = []
     for output in outputs:
+        output = c_ulong(output).value
         extracted_outputs.append(output >> 32)
         extracted_outputs.append(output & ((1 << 32) - 1))
 
@@ -30,6 +31,9 @@ def generate_from_outputs(outputs):
             state = java.next_bits.predict_state(test_outputs)
             if state:
                 break
+
+    if not state:
+        raise RuntimeError("Unable to recover internal state. (Not enough values?)")
 
     gen = java.next_bits.generate_values(state[0], 32)
     while True:
