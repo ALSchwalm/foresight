@@ -7,7 +7,7 @@ Note that it is an error to pass a value for 'bits' that is larger than 32.
 """
 
 from predrng import lcg
-from ctypes import c_uint
+from ctypes import c_uint32
 
 
 def predict_state(values):
@@ -40,7 +40,7 @@ def generate_from_seed(seed, bits):
 
 
 def generate_from_outputs(outputs, bits):
-    outputs = [c_uint(o).value for o in outputs]
+    outputs = [c_uint32(o).value for o in outputs]
     gen = lcg.generate_from_outputs(outputs,
                                     25214903917,
                                     11,

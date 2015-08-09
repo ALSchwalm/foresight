@@ -1,4 +1,4 @@
-from ctypes import c_int, c_long, c_ulong
+from ctypes import c_int32, c_int64, c_uint64
 from predrng import java
 from predrng.java import next_bits
 from itertools import combinations
@@ -7,15 +7,15 @@ from itertools import combinations
 def generate_from_seed(seed):
     gen = java.next_bits.generate_from_seed(seed, 32)
     while True:
-        num = c_long(next(gen) << 32).value
-        num += c_int(next(gen)).value
-        yield c_long(num).value
+        num = c_int64(next(gen) << 32).value
+        num += c_int32(next(gen)).value
+        yield c_int64(num).value
 
 
 def generate_from_outputs(outputs):
     extracted_outputs = []
     for output in outputs:
-        output = c_ulong(output).value
+        output = c_uint64(output).value
         extracted_outputs.append(output >> 32)
         extracted_outputs.append(output & ((1 << 32) - 1))
 
@@ -37,6 +37,6 @@ def generate_from_outputs(outputs):
 
     gen = java.next_bits.generate_values(state[0], 32)
     while True:
-        num = c_long(next(gen) << 32).value
-        num += c_int(next(gen)).value
-        yield c_long(num).value
+        num = c_int64(next(gen) << 32).value
+        num += c_int32(next(gen)).value
+        yield c_int64(num).value
