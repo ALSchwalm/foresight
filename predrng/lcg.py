@@ -13,7 +13,7 @@ def next_lcg(state, a, c, m, masked_bits):
     return ((a * state + c) % m) >> masked_bits
 
 
-def predict_state(values, a, c, m, masked_bits):
+def predict_state(values, a, c, m, masked_bits, output_modulus=None):
     '''
     Given a list of values from a LCG, predict the internal state
 
@@ -24,16 +24,22 @@ def predict_state(values, a, c, m, masked_bits):
     for i in range(0, 2 ** masked_bits):
         possible_state = (values[0] << masked_bits) + i
         for n in range(1, len(values)):
-            if next_lcg(possible_state, a, c, m, masked_bits) == values[n]:
-                possible_state = next_lcg(possible_state, a, c, m, masked_bits=0)
+            if output_modulus:
+                if next_lcg(possible_state, a, c, m, masked_bits) % output_modulus == values[n]:
+                    possible_state = next_lcg(possible_state, a, c, m, masked_bits=0)
+                else:
+                    break
             else:
-                break
+                if next_lcg(possible_state, a, c, m, masked_bits) == values[n]:
+                    possible_state = next_lcg(possible_state, a, c, m, masked_bits=0)
+                else:
+                    break
         else:
             candidates.append(possible_state)
     return candidates
 
 
-def generate_values(state, a, c, m, masked_bits):
+def generate_values(state, a, c, m, masked_bits, output_modulus=None):
     '''
     Generate a list of values from a linear congruential algorithm.
 
@@ -46,24 +52,27 @@ def generate_values(state, a, c, m, masked_bits):
 
     while(True):
         state = next_lcg(state, a, c, m, masked_bits=0)
-        yield state >> masked_bits
+        if output_modulus:
+            yield (state >> masked_bits) % output_modulus
+        else:
+            yield state >> masked_bits
 
 
-def generate_from_seed(seed, a=214013, c=2531011, m=2**31, masked_bits=16):
+def generate_from_seed(seed, a=214013, c=2531011, m=2**31, masked_bits=16, output_modulus=None):
     '''
     Create a continuation that yields random values from an LCG with the given parameters,
     using 'seed' as the initial seed. Defaults to MSVC constants.
     '''
-    yield from generate_values(seed, a, c, m, masked_bits)
+    yield from generate_values(seed, a, c, m, masked_bits, output_modulus)
 
 
 def generate_from_outputs(prev_values, a=214013, c=2531011, m=2**31,
-                          masked_bits=16, noexcept=False):
+                          masked_bits=16, output_modulus=None, noexcept=False):
     '''
     Create a continuation that yields random values from an LCG with the given parameters,
     recovering the state from the given list of values. Defaults to MSVC constants.
     '''
-    state = predict_state(prev_values, a, c, m, masked_bits)
+    state = predict_state(prev_values, a, c, m, masked_bits, output_modulus)
 
     if len(state) > 1:
         if noexcept:
@@ -76,4 +85,4 @@ def generate_from_outputs(prev_values, a=214013, c=2531011, m=2**31,
         else:
             raise RuntimeError("No viable candidate found. Some values may not be consecutive.")
     state = state[0]
-    yield from generate_values(state, a, c, m, masked_bits)
+    yield from generate_values(state, a, c, m, masked_bits, output_modulus)

@@ -5,7 +5,7 @@ from textwrap import dedent
 from predrng import lcg, glibc, php, java
 from predrng.glibc import random, rand_r
 from predrng.php import rand
-from predrng.java import nextInt, nextLong, nextFloat, nextBoolean
+from predrng.java import nextInt, nextLong
 from itertools import islice
 
 
@@ -17,9 +17,13 @@ def print_from_gen(generator, count):
 def handle_msvc(args):
     if args.function in ("rand",):
         if args.seed:
-            print_from_gen(lcg.generate_from_seed(args.seed), args.count)
+            print_from_gen(lcg.generate_from_seed(args.seed,
+                                                  output_modulus=args.modulo),
+                           args.count)
         else:
-            print_from_gen(lcg.generate_from_outputs(args.outputs), args.count)
+            print_from_gen(lcg.generate_from_outputs(args.outputs,
+                                                     output_modulus=args.modulo),
+                           args.count)
 
 
 def handle_java(args):
@@ -37,20 +41,6 @@ def handle_java(args):
         else:
             print_from_gen(java.nextLong.generate_from_outputs(args.outputs),
                            args.count)
-    elif args.function == "nextFloat":
-        if args.seed:
-            print_from_gen(java.nextFloat.generate_from_seed(args.seed),
-                           args.count)
-        else:
-            print_from_gen(java.nextFloat.generate_from_outputs(args.outputs),
-                           args.count)
-    elif args.function == "nextBoolean":
-        if args.seed:
-            print_from_gen(java.nextBoolean.generate_from_seed(args.seed),
-                           args.count)
-        else:
-            print_from_gen(java.nextBoolean.generate_from_outputs(args.outputs),
-                           args.count)
 
 
 def handle_lcg(args):
@@ -59,13 +49,15 @@ def handle_lcg(args):
                                               args.multiplier,
                                               args.increment,
                                               args.modulus,
-                                              args.bitshift), args.count)
+                                              args.bitshift,
+                                              args.modulo), args.count)
     else:
         print_from_gen(lcg.generate_from_outputs(args.outputs,
                                                  args.multiplier,
                                                  args.increment,
                                                  args.modulus,
-                                                 args.bitshift), args.count)
+                                                 args.bitshift,
+                                                 args.modulo), args.count)
 
 
 def handle_glibc(args):
@@ -88,10 +80,12 @@ def handle_glibc(args):
 def handle_php(args):
     if args.function == "rand":
         if args.seed:
-            print_from_gen(php.rand.generate_from_seed(args.seed, args.platform),
-                           args.count)
+            print_from_gen(php.rand.generate_from_seed(args.seed, args.platform,
+                                                       args.range), args.count)
         else:
-            print_from_gen(php.rand.generate_from_outputs(args.outputs, args.platform),
+            print_from_gen(php.rand.generate_from_outputs(args.outputs,
+                                                          args.platform,
+                                                          args.range),
                            args.count)
 
 def add_basic_configuration(parser):
@@ -123,13 +117,15 @@ def setup_php_parser(sp):
                         help="Platform PHP is running on")
     sp_php.add_argument('function', choices=('rand',),
                         help="Source of outputs")
+    sp_php.add_argument('-r', '--range', help="Lower and upper bound (e.g. -r 1 10)"
+                        " is equivalent to function(1, 10)",
+                        nargs=2, type=int)
     add_basic_configuration(sp_php)
 
 
 def setup_java_parser(sp):
     sp_java = sp.add_parser("java", help="Predict outputs from java.util.Random")
-    sp_java.add_argument('function', choices=('nextInt', 'nextLong',
-                                              'nextFloat', 'nextBoolean'),
+    sp_java.add_argument('function', choices=('nextInt', 'nextLong'),
                          help="Source of outputs")
     add_basic_configuration(sp_java)
 
@@ -160,7 +156,7 @@ def main():
     would be returned from the random number generator.""",
                                      epilog="See additional help for a command with: predict_rng <command> -h")
 
-    parser.add_argument("-m", "--modulo", type=int, nargs=1,
+    parser.add_argument("-m", "--modulo", type=int,
                         help="Output values modulo this number", metavar="MOD")
 
     sp = parser.add_subparsers(dest="command", title="Valid Commands")

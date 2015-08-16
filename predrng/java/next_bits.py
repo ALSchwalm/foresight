@@ -45,6 +45,6 @@ def generate_from_outputs(outputs, bits):
                                     25214903917,
                                     11,
                                     281474976710656,
-                                    16)
+                                    48-bits)
     while True:
         yield next(gen) & ((1 << bits) - 1)

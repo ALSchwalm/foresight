@@ -18,26 +18,27 @@
 # 0.93845168309142 -> 1007654821   seed1 = 664800686    seed2 = 86994586
 # 0.83482678498591 -> 896388434    seed1 = 1007654821   seed2 = 1094649440
 
-# (664800686 * 3 + x) % 0x3FFFFFFFL = 1007654821
+# (664800686 * 3 + seed2) % 0x3FFFFFFFL = 1007654821
 # seed2 = 86994586
 
 # output3 = (1007654821 * 3 + 1094649440) mod 0x3FFFFFFF
 
 values = [0.61914388706828, 0.93845168309142]
-values = [v * 0x3FFFFFFF for v in values]
+values = [int(round(v * 0x3FFFFFFF, 0)) for v in values]
 
 seed1 = values[0]
 seed2 = None
 
 for x in range(2**30):
+    # x = 86994586
     if (seed1 * 3 + x) % 0x3FFFFFFF == values[1]:
         seed2 = x
         break
 
-print seed1, seed2
+print(seed1, seed2)
 
 def find_second_seed(seed1, output2):
     for i in range(100000):
         possible = i * 0x3FFFFFFF + output2
         if  (seed1 * 3 + possible) % 0x3FFFFFFF == output2:
-            print possible
+            print(possible)
