@@ -1,3 +1,7 @@
+from math import log, ceil
+from predrng.utils import check_enough_values
+
+
 def next_lcg(state, a, c, m, masked_bits):
     '''
     Determine the next value of a linear congruential generator
@@ -20,22 +24,33 @@ def predict_state(values, a, c, m, masked_bits, output_modulus=None):
     @param values: A list of consecutive values output from the LCG
     @return: A list of possible internal state values for the LCG
     '''
+    if check_enough_values(len(values), log(m, 2) - masked_bits, log(m, 2),
+                           output_modulus) is False:
+        print("WARNING: Not enough outputs for unique answer. Result may be incorrect.")
+
     candidates = []
-    for i in range(0, 2 ** masked_bits):
-        possible_state = (values[0] << masked_bits) + i
-        for n in range(1, len(values)):
-            if output_modulus:
-                if next_lcg(possible_state, a, c, m, masked_bits) % output_modulus == values[n]:
-                    possible_state = next_lcg(possible_state, a, c, m, masked_bits=0)
+    if output_modulus:
+        for i in range(ceil(log(m, 2) - masked_bits - log(output_modulus, 2))+1):
+            initial = values[0] + i * output_modulus
+            for lower_bits in range(2 ** masked_bits):
+                possible_state = (initial << masked_bits) + lower_bits
+                for n in range(1, len(values)):
+                    if next_lcg(possible_state, a, c, m, masked_bits) % output_modulus == values[n]:
+                        possible_state = next_lcg(possible_state, a, c, m, masked_bits=0)
+                    else:
+                        break
                 else:
-                    break
-            else:
+                    return [possible_state]
+    else:
+        for lower_bits in range(2 ** masked_bits):
+            possible_state = (values[0] << masked_bits) + lower_bits
+            for n in range(1, len(values)):
                 if next_lcg(possible_state, a, c, m, masked_bits) == values[n]:
                     possible_state = next_lcg(possible_state, a, c, m, masked_bits=0)
                 else:
                     break
-        else:
-            candidates.append(possible_state)
+            else:
+                candidates.append(possible_state)
     return candidates
 
 

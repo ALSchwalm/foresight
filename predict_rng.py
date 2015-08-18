@@ -11,7 +11,7 @@ from itertools import islice
 
 def print_from_gen(generator, count):
     for v in islice(generator, 0, count):
-        print(v)
+        print(v, end=" ")
 
 
 def handle_msvc(args):
@@ -70,10 +70,12 @@ def handle_glibc(args):
                            args.count)
     elif args.function == "rand_r":
         if args.seed:
-            print_from_gen(glibc.rand_r.generate_from_seed(args.seed),
+            print_from_gen(glibc.rand_r.generate_from_seed(args.seed,
+                                                           args.modulo),
                            args.count)
         else:
-            print_from_gen(glibc.rand_r.generate_from_outputs(args.outputs),
+            print_from_gen(glibc.rand_r.generate_from_outputs(args.outputs,
+                                                              args.modulo),
                            args.count)
 
 
@@ -88,6 +90,7 @@ def handle_php(args):
                                                           args.range),
                            args.count)
 
+
 def add_basic_configuration(parser):
     parser.add_argument("count", type=int,
                         help="The number of outputs to predict")
@@ -97,10 +100,13 @@ def add_basic_configuration(parser):
     parser.add_argument("outputs", nargs="*", type=int,
                         help="Outputs from this RNG", metavar="output")
 
+
 def setup_glibc_parser(sp):
     sp_glibc = sp.add_parser("glibc", help="Predict outputs from GNU C Library random functions")
     sp_glibc.add_argument('function', choices=('rand', 'random', 'rand_r'),
                           help="Source of outputs")
+    sp_glibc.add_argument("-m", "--modulo", type=int,
+                          help="Output values modulo this number", metavar="MOD")
     add_basic_configuration(sp_glibc)
 
 
@@ -108,6 +114,8 @@ def setup_msvc_parser(sp):
     sp_msvc = sp.add_parser("msvc", help="Predict outputs from Microsoft Visual C++ random functions")
     sp_msvc.add_argument('function', choices=('rand',),
                          help="Source of outputs")
+    sp_msvc.add_argument("-m", "--modulo", type=int,
+                         help="Output values modulo this number", metavar="MOD")
     add_basic_configuration(sp_msvc)
 
 
@@ -140,6 +148,9 @@ def setup_lcg_parser(sp):
         state_(n+1) = MULTIPLIER * state_n + INCREMENT (mod MODULUS)
         value_n = state_n >> BITSHIFT"""))
 
+    sp_lcg.add_argument("-m", "--modulo", type=int,
+                        help="Output values modulo this number", metavar="MOD")
+
     sp_lcg.add_argument("multiplier", type=int)
     sp_lcg.add_argument("increment", type=int)
     sp_lcg.add_argument("modulus", type=int)
@@ -155,9 +166,6 @@ def main():
     be passed the seed, which will be used to produce the same values that
     would be returned from the random number generator.""",
                                      epilog="See additional help for a command with: predict_rng <command> -h")
-
-    parser.add_argument("-m", "--modulo", type=int,
-                        help="Output values modulo this number", metavar="MOD")
 
     sp = parser.add_subparsers(dest="command", title="Valid Commands")
     sp.required = True
