@@ -12,6 +12,7 @@ from itertools import islice
 def print_from_gen(generator, count):
     for v in islice(generator, 0, count):
         print(v, end=" ")
+    print()
 
 
 def handle_msvc(args):

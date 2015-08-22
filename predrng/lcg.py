@@ -17,6 +17,23 @@ def next_lcg(state, a, c, m, masked_bits):
     return ((a * state + c) % m) >> masked_bits
 
 
+def verify_candidate(candidate, values, a, c, m, masked_bits, operation=None):
+    possible_state = candidate
+    for value in values:
+        if operation is not None:
+            if operation(next_lcg(possible_state, a, c, m, masked_bits)) == value:
+                possible_state = next_lcg(possible_state, a, c, m, masked_bits=0)
+            else:
+                break
+        else:
+            if next_lcg(possible_state, a, c, m, masked_bits) == value:
+                possible_state = next_lcg(possible_state, a, c, m, masked_bits=0)
+            else:
+                break
+    else:
+        return possible_state
+
+
 def predict_state(values, a, c, m, masked_bits, output_modulus=None):
     '''
     Given a list of values from a LCG, predict the internal state
@@ -28,33 +45,30 @@ def predict_state(values, a, c, m, masked_bits, output_modulus=None):
                            output_modulus) is False:
         print("WARNING: Not enough outputs for unique answer. Result may be incorrect.")
 
-    candidates = []
-    if output_modulus:
+    if output_modulus is not None:
         for i in range(ceil(log(m, 2) - masked_bits - log(output_modulus, 2))+1):
             initial = values[0] + i * output_modulus
             for lower_bits in range(2 ** masked_bits):
                 possible_state = (initial << masked_bits) + lower_bits
-                for n in range(1, len(values)):
-                    if next_lcg(possible_state, a, c, m, masked_bits) % output_modulus == values[n]:
-                        possible_state = next_lcg(possible_state, a, c, m, masked_bits=0)
-                    else:
-                        break
-                else:
-                    return [possible_state]
+                checked_state = verify_candidate(possible_state,
+                                                 values[1:],
+                                                 a, c, m, masked_bits,
+                                                 lambda x: x % output_modulus)
+                if checked_state:
+                    return checked_state
+
     else:
         for lower_bits in range(2 ** masked_bits):
             possible_state = (values[0] << masked_bits) + lower_bits
-            for n in range(1, len(values)):
-                if next_lcg(possible_state, a, c, m, masked_bits) == values[n]:
-                    possible_state = next_lcg(possible_state, a, c, m, masked_bits=0)
-                else:
-                    break
-            else:
-                candidates.append(possible_state)
-    return candidates
+            checked_state = verify_candidate(possible_state,
+                                             values[1:],
+                                             a, c, m, masked_bits,
+                                             output_modulus)
+            if checked_state:
+                return checked_state
 
 
-def generate_values(state, a, c, m, masked_bits, output_modulus=None):
+def generate_values(state, a=214013, c=2531011, m=2**31, masked_bits=16, output_modulus=None):
     '''
     Generate a list of values from a linear congruential algorithm.
 
@@ -89,15 +103,9 @@ def generate_from_outputs(prev_values, a=214013, c=2531011, m=2**31,
     '''
     state = predict_state(prev_values, a, c, m, masked_bits, output_modulus)
 
-    if len(state) > 1:
-        if noexcept:
-            yield None
-        else:
-            raise RuntimeError("Unable to find a unique internal state. Not enough values.")
-    elif len(state) == 0:
+    if state is None:
         if noexcept:
             yield None
         else:
             raise RuntimeError("No viable candidate found. Some values may not be consecutive.")
-    state = state[0]
     yield from generate_values(state, a, c, m, masked_bits, output_modulus)

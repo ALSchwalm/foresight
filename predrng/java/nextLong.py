@@ -32,10 +32,10 @@ def generate_from_outputs(outputs):
             if state:
                 break
 
-    if not state:
+    if state is None:
         raise RuntimeError("Unable to recover internal state. (Not enough values?)")
 
-    gen = java.next_bits.generate_values(state[0], 32)
+    gen = java.next_bits.generate_values(state, 32)
     while True:
         num = c_int64(next(gen) << 32).value
         num += c_int32(next(gen)).value
