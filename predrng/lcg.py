@@ -17,8 +17,7 @@ def next_lcg(state, a, c, m, masked_bits):
     return ((a * state + c) % m) >> masked_bits
 
 
-def verify_candidate(candidate, values, a, c, m, masked_bits, operation=None):
-    possible_state = candidate
+def verify_candidate(possible_state, values, a, c, m, masked_bits, operation=None):
     for value in values:
         if operation is not None:
             if operation(next_lcg(possible_state, a, c, m, masked_bits)) == value:

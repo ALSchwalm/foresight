@@ -93,12 +93,12 @@ def handle_php(args):
 
 
 def add_basic_configuration(parser):
-    parser.add_argument("count", type=int,
+    parser.add_argument("-c", "--count", type=int,
                         help="The number of outputs to predict")
 
     parser.add_argument("-s", "--seed", type=int,
                         help="The initial seed")
-    parser.add_argument("outputs", nargs="*", type=int,
+    parser.add_argument("-o", "--outputs", nargs="+", type=int,
                         help="Outputs from this RNG", metavar="output")
 
 
@@ -181,7 +181,9 @@ def main():
 
     ns = parser.parse_args()
 
-    if vars(ns).get("seed") and vars(ns).get("outputs"):
+    if not vars(ns).get("seed") and not vars(ns).get("outputs"):
+        parser.error("Output or a seed must be provided")
+    elif vars(ns).get("seed") and vars(ns).get("outputs"):
         parser.error("Outputs are unnecessary when a seed is given")
 
     if ns.command == "glibc":
