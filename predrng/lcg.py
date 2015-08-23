@@ -2,7 +2,7 @@ from math import log, ceil
 from predrng.utils import check_enough_values
 
 
-def next_lcg(state, a, c, m, masked_bits):
+def next_state(state, a, c, m, masked_bits):
     '''
     Determine the next value of a linear congruential generator
 
@@ -20,13 +20,13 @@ def next_lcg(state, a, c, m, masked_bits):
 def verify_candidate(possible_state, values, a, c, m, masked_bits, operation=None):
     for value in values:
         if operation is not None:
-            if operation(next_lcg(possible_state, a, c, m, masked_bits)) == value:
-                possible_state = next_lcg(possible_state, a, c, m, masked_bits=0)
+            if operation(next_state(possible_state, a, c, m, masked_bits)) == value:
+                possible_state = next_state(possible_state, a, c, m, masked_bits=0)
             else:
                 break
         else:
-            if next_lcg(possible_state, a, c, m, masked_bits) == value:
-                possible_state = next_lcg(possible_state, a, c, m, masked_bits=0)
+            if next_state(possible_state, a, c, m, masked_bits) == value:
+                possible_state = next_state(possible_state, a, c, m, masked_bits=0)
             else:
                 break
     else:
@@ -79,7 +79,7 @@ def generate_values(state, a=214013, c=2531011, m=2**31, masked_bits=16, output_
     '''
 
     while(True):
-        state = next_lcg(state, a, c, m, masked_bits=0)
+        state = next_state(state, a, c, m, masked_bits=0)
         if output_modulus:
             yield (state >> masked_bits) % output_modulus
         else:

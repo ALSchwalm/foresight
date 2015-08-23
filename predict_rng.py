@@ -2,10 +2,11 @@
 
 import argparse
 from textwrap import dedent
-from predrng import lcg, glibc, php, java
+from predrng import lcg, glibc, php, java, mysql
 from predrng.glibc import random, rand_r
 from predrng.php import rand
 from predrng.java import nextInt, nextLong
+from predrng.mysql import rand
 from itertools import islice
 
 
@@ -92,6 +93,15 @@ def handle_php(args):
                            args.count)
 
 
+def handle_mysql(args):
+    if args.function == "rand":
+        if args.seed:
+            print_from_gen(mysql.rand.generate_from_seed(args.seed),
+                           args.count)
+        else:
+            print_from_gen(mysql.rand.generate_from_outputs(args.outputs),
+                           args.count)
+
 def add_basic_configuration(parser):
     parser.add_argument("-c", "--count", type=int,
                         help="The number of outputs to predict")
@@ -130,6 +140,16 @@ def setup_php_parser(sp):
                         " is equivalent to function(1, 10)",
                         nargs=2, type=int)
     add_basic_configuration(sp_php)
+
+
+def setup_mysql_parser(sp):
+    sp_mysql = sp.add_parser("mysql", help="Predict outputs from MySQL random functions",
+                             conflict_handler='resolve')
+    sp_mysql.add_argument('function', choices=('rand',),
+                          help="Source of outputs")
+    add_basic_configuration(sp_mysql)
+    sp_mysql.add_argument("-o", "--outputs", nargs="+", type=float,
+                          help="Outputs from this RNG", metavar="output")
 
 
 def setup_java_parser(sp):
@@ -178,6 +198,7 @@ def main():
     setup_php_parser(sp)
     setup_java_parser(sp)
     setup_lcg_parser(sp)
+    setup_mysql_parser(sp)
 
     ns = parser.parse_args()
 
@@ -196,6 +217,8 @@ def main():
         handle_java(ns)
     elif ns.command == "lcg":
         handle_lcg(ns)
+    elif ns.command == "mysql":
+        handle_mysql(ns)
 
 if __name__ == "__main__":
     main()
