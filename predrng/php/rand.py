@@ -1,5 +1,5 @@
 from predrng import lcg, glibc
-
+from math import log, ceil
 
 def _platform_tmax(platform):
     if platform == "windows":
@@ -19,16 +19,19 @@ def predict_state(values, platform, value_range=None):
         tmax = _platform_tmax(platform)
         min = value_range[0]
         max = value_range[1]
+        init = int((values[0] - min) * (tmax + 1.0) / (max - min + 1.0))
         operation = lambda x: rand_range(x, min, max, tmax)
+
         if platform == "windows":
-            # TODO: we should only need to check numbers where
-            # rand_range(num, min, max, tmax) == values[0]
-            for i in range(2**31):
-                state = lcg.verify_candidate(i, values[1:], a=214013, c=2531011,
-                                             m=2**31, masked_bits=16,
-                                             operation=operation)
-                if state is not None:
-                    return state
+            for i in range(2**ceil(16 - log(max - min, 2))):
+                for lower in range(2**16):
+                    num = (init << 16) | lower
+                    state = lcg.verify_candidate(num, values[1:], a=214013, c=2531011,
+                                                 m=2**31, masked_bits=16,
+                                                 operation=operation)
+                    if state is not None:
+                        return state
+                init += 1
         elif platform == "linux":
             raise NotImplementedError("Linux PHP bounded rand is not yet supported")
 
