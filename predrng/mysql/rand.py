@@ -20,11 +20,6 @@ def generate_values(state):
     #   rand_st->seed1= (rand_st->seed1*3+rand_st->seed2) % rand_st->max_value;
     #   rand_st->seed2= (rand_st->seed1+rand_st->seed2+33) % rand_st->max_value;
     #   return (((double) rand_st->seed1) / rand_st->max_value_dbl);
-
-    # simplified:
-    #   seed1 = (seed1 * 3 + seed2) % 0x3FFFFFFFL
-    #   seed2 = (seed1 + seed2 + 33) % 0x3FFFFFFFL
-    #   return seed1 / 0x3FFFFFFFL
     seed1, seed2 = state
 
     while(True):

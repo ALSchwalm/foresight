@@ -1,34 +1,19 @@
-import predict_msvc
-import itertools
+from predrng.glibc import rand_r
 
-# 365    -> 5
-# 1216   -> 28
-# 5415   -> 15
-# 16704  -> 0
+SYMBOLS = "abcdefghijklmnopqrstuvwxyz0123456789"
 
-# 24504  -> 24
-# 11254  -> 22
-# 24698  -> 2
-# 1702   -> 10
 
-def msvc_lcg_next(state):
-    return predict_msvc.lcg(state, 214013, 2531011, 2**31, 0)
+def main():
+    path_1 = input("First path:")
+    path_2 = input("Second path:")
+    paths = path_1 + path_2
+    outputs = [SYMBOLS.index(letter) for letter in paths]
 
-values = [5, 28, 15, 0, 24, 22]
+    gen = rand_r.generate_from_outputs(outputs, len(SYMBOLS))
+    print("Next path:", end="")
+    for _ in range(4):
+        print(SYMBOLS[next(gen)], end="")
+    print()
 
-for i in range(2**16):
-    if i % 36 == values[0]:
-        for j in range(2**16):
-            a = i << 16
-            a |= j
-
-            next = msvc_lcg_next(a)
-
-            for v in values[1:]:
-                if (next >> 16) % 36 == v:
-                    next = msvc_lcg_next(next)
-                else:
-                    break
-            else:
-                print(next >> 16)
-                break
+if __name__ == "__main__":
+    main()
