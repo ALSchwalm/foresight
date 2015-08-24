@@ -1,4 +1,4 @@
-from foresight import lcg, glibc
+from foresight import msvc, glibc, lcg
 from math import log, ceil
 
 
@@ -12,8 +12,7 @@ def _platform_tmax(platform):
 def predict_state(values, platform, value_range=None):
     if value_range is None:
         if platform == "windows":
-            return lcg.predict_state(values, a=214013, c=2531011, m=2**31,
-                                     masked_bits=16)
+            return msvc.rand.predict_state(values)
         elif platform == "linux":
             return glibc.random.predict_state(values)
     else:
@@ -27,8 +26,9 @@ def predict_state(values, platform, value_range=None):
             for i in range(2**ceil(16 - log(max - min, 2))):
                 for lower in range(2**16):
                     num = (init << 16) | lower
-                    state = lcg.verify_candidate(num, values[1:], a=214013, c=2531011,
-                                                 m=2**31, masked_bits=16,
+                    state = lcg.verify_candidate(num, values[1:], a=214013,
+                                                 c=2531011, m=2**31,
+                                                 masked_bits=16,
                                                  operation=operation)
                     if state is not None:
                         return state
@@ -54,7 +54,7 @@ def from_outputs(prev_values, platform, value_range=None):
 
     tmax = _platform_tmax(platform)
     if platform == "windows":
-        gen = lcg.generate_values(state)
+        gen = msvc.rand.generate_values(state)
     elif platform == "linux":
         gen = glibc.random.generate_values(state)
 
@@ -68,9 +68,9 @@ def from_outputs(prev_values, platform, value_range=None):
 def from_seed(seed, platform, value_range=None):
     tmax = _platform_tmax(platform)
     if platform == "windows":
-        gen = lcg.generate_from_seed(seed)
+        gen = msvc.rand.from_seed(seed)
     elif platform == "linux":
-        gen = glibc.random.generate_from_seed(seed)
+        gen = glibc.random.from_seed(seed)
 
     if value_range is None:
         value_range = [0, tmax]

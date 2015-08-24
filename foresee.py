@@ -2,10 +2,11 @@
 
 import argparse
 from textwrap import dedent
-from foresight import lcg, glibc, php, java, mysql
+from foresight import lcg, glibc, php, java, mysql, msvc
 from foresight.glibc import random, rand_r
 from foresight.php import rand
 from foresight.java import nextInt, nextLong
+from foresight.msvc import rand
 from foresight.mysql import rand
 from itertools import islice
 
@@ -19,12 +20,12 @@ def print_from_gen(generator, count):
 def handle_msvc(args):
     if args.function in ("rand",):
         if args.seed:
-            print_from_gen(lcg.from_seed(args.seed,
-                                         output_modulus=args.modulo),
+            print_from_gen(msvc.rand.from_seed(args.seed,
+                                               output_modulus=args.modulo),
                            args.count)
         else:
-            print_from_gen(lcg.from_outputs(args.outputs,
-                                            output_modulus=args.modulo),
+            print_from_gen(msvc.rand.from_outputs(args.outputs,
+                                                  output_modulus=args.modulo),
                            args.count)
 
 
