@@ -90,7 +90,7 @@ def generate_values(state, output_modulus=None):
             yield result % output_modulus
 
 
-def generate_from_outputs(prev_values, output_modulus=None):
+def from_outputs(prev_values, output_modulus=None):
     if output_modulus:
         for i in range(2**(32 - int(log(output_modulus, 2)))):
             initial = output_modulus * i + prev_values[0]
@@ -105,5 +105,5 @@ def generate_from_outputs(prev_values, output_modulus=None):
     yield from generate_values(state, output_modulus)
 
 
-def generate_from_seed(seed, output_modulus=None):
+def from_seed(seed, output_modulus=None):
     yield from generate_values(seed, output_modulus)

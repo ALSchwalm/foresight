@@ -86,7 +86,7 @@ def generate_values(state, a=214013, c=2531011, m=2**31, masked_bits=16, output_
             yield state >> masked_bits
 
 
-def generate_from_seed(seed, a=214013, c=2531011, m=2**31, masked_bits=16, output_modulus=None):
+def from_seed(seed, a=214013, c=2531011, m=2**31, masked_bits=16, output_modulus=None):
     '''
     Create a continuation that yields random values from an LCG with the given parameters,
     using 'seed' as the initial seed. Defaults to MSVC constants.
@@ -94,8 +94,8 @@ def generate_from_seed(seed, a=214013, c=2531011, m=2**31, masked_bits=16, outpu
     yield from generate_values(seed, a, c, m, masked_bits, output_modulus)
 
 
-def generate_from_outputs(prev_values, a=214013, c=2531011, m=2**31,
-                          masked_bits=16, output_modulus=None, noexcept=False):
+def from_outputs(prev_values, a=214013, c=2531011, m=2**31,
+                 masked_bits=16, output_modulus=None, noexcept=False):
     '''
     Create a continuation that yields random values from an LCG with the given parameters,
     recovering the state from the given list of values. Defaults to MSVC constants.

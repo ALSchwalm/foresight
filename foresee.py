@@ -19,87 +19,83 @@ def print_from_gen(generator, count):
 def handle_msvc(args):
     if args.function in ("rand",):
         if args.seed:
-            print_from_gen(lcg.generate_from_seed(args.seed,
-                                                  output_modulus=args.modulo),
+            print_from_gen(lcg.from_seed(args.seed,
+                                         output_modulus=args.modulo),
                            args.count)
         else:
-            print_from_gen(lcg.generate_from_outputs(args.outputs,
-                                                     output_modulus=args.modulo),
+            print_from_gen(lcg.from_outputs(args.outputs,
+                                            output_modulus=args.modulo),
                            args.count)
 
 
 def handle_java(args):
     if args.function == "nextInt":
         if args.seed:
-            print_from_gen(java.nextInt.generate_from_seed(args.seed),
+            print_from_gen(java.nextInt.from_seed(args.seed),
                            args.count)
         else:
-            print_from_gen(java.nextInt.generate_from_outputs(args.outputs),
+            print_from_gen(java.nextInt.from_outputs(args.outputs),
                            args.count)
     elif args.function == "nextLong":
         if args.seed:
-            print_from_gen(java.nextLong.generate_from_seed(args.seed),
+            print_from_gen(java.nextLong.from_seed(args.seed),
                            args.count)
         else:
-            print_from_gen(java.nextLong.generate_from_outputs(args.outputs),
+            print_from_gen(java.nextLong.from_outputs(args.outputs),
                            args.count)
 
 
 def handle_lcg(args):
     if args.seed:
-        print_from_gen(lcg.generate_from_seed(args.seed,
-                                              args.multiplier,
-                                              args.increment,
-                                              args.modulus,
-                                              args.bitshift,
-                                              args.modulo), args.count)
+        print_from_gen(lcg.from_seed(args.seed, args.multiplier,
+                                     args.increment, args.modulus,
+                                     args.bitshift, args.modulo),
+                       args.count)
     else:
-        print_from_gen(lcg.generate_from_outputs(args.outputs,
-                                                 args.multiplier,
-                                                 args.increment,
-                                                 args.modulus,
-                                                 args.bitshift,
-                                                 args.modulo), args.count)
+        print_from_gen(lcg.from_outputs(args.outputs, args.multiplier,
+                                        args.increment, args.modulus,
+                                        args.bitshift, args.modulo),
+                       args.count)
 
 
 def handle_glibc(args):
     if args.function in ("rand", "random"):
         if args.seed:
-            print_from_gen(glibc.random.generate_from_seed(args.seed),
+            print_from_gen(glibc.random.from_seed(args.seed),
                            args.count)
         else:
-            print_from_gen(glibc.random.generate_from_outputs(args.outputs),
+            print_from_gen(glibc.random.from_outputs(args.outputs),
                            args.count)
     elif args.function == "rand_r":
         if args.seed:
-            print_from_gen(glibc.rand_r.generate_from_seed(args.seed,
-                                                           args.modulo),
+            print_from_gen(glibc.rand_r.from_seed(args.seed,
+                                                  args.modulo),
                            args.count)
         else:
-            print_from_gen(glibc.rand_r.generate_from_outputs(args.outputs,
-                                                              args.modulo),
+            print_from_gen(glibc.rand_r.from_outputs(args.outputs,
+                                                     args.modulo),
                            args.count)
 
 
 def handle_php(args):
     if args.function == "rand":
         if args.seed:
-            print_from_gen(php.rand.generate_from_seed(args.seed, args.platform,
-                                                       args.range), args.count)
+            print_from_gen(php.rand.from_seed(args.seed, args.platform,
+                                              args.range), args.count)
         else:
-            print_from_gen(php.rand.generate_from_outputs(args.outputs,
-                                                          args.platform,
-                                                          args.range),
+            print_from_gen(php.rand.from_outputs(args.outputs,
+                                                 args.platform,
+                                                 args.range),
                            args.count)
 
 
 def handle_mysql(args):
     if args.function == "rand":
         if args.seed:
-            print_from_gen(mysql.rand.generate_from_seed(args.seed),
+            print_from_gen(mysql.rand.from_seed(args.seed),
                            args.count)
         else:
-            print_from_gen(mysql.rand.generate_from_outputs(args.outputs),
+            print_from_gen(mysql.rand.from_outputs(args.outputs),
                            args.count)
 
 def add_basic_configuration(parser):

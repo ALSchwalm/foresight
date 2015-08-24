@@ -28,7 +28,7 @@ def generate_values(state):
         yield seed1 / 0x3FFFFFFF
 
 
-def generate_from_outputs(prev_values):
+def from_outputs(prev_values):
     state = predict_state(prev_values)
     gen = generate_values(state)
 
@@ -39,7 +39,7 @@ def generate_from_outputs(prev_values):
         yield next(gen)
 
 
-def generate_from_seed(seed):
+def from_seed(seed):
     seed1 = c_uint32(seed*0x10001+55555555).value
     seed2 = c_uint32(seed*0x10000001).value
     yield from generate_values([seed1, seed2])

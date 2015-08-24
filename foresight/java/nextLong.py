@@ -4,7 +4,7 @@ from foresight.java import next_bits
 from itertools import combinations
 
 
-def generate_from_seed(seed):
+def from_seed(seed):
     gen = java.next_bits.generate_from_seed(seed, 32)
     while True:
         num = c_int64(next(gen) << 32).value
@@ -12,7 +12,7 @@ def generate_from_seed(seed):
         yield c_int64(num).value
 
 
-def generate_from_outputs(outputs):
+def from_outputs(outputs):
     extracted_outputs = []
     for output in outputs:
         output = c_uint64(output).value

@@ -1,6 +1,7 @@
 from foresight import lcg, glibc
 from math import log, ceil
 
+
 def _platform_tmax(platform):
     if platform == "windows":
         return 1 << 15
@@ -48,7 +49,7 @@ def rand_range(n, min, max, tmax):
     return int(min + (max - min + 1.0) * n // (tmax + 1.0))
 
 
-def generate_from_outputs(prev_values, platform, value_range=None):
+def from_outputs(prev_values, platform, value_range=None):
     state = predict_state(prev_values, platform, value_range)
 
     tmax = _platform_tmax(platform)
@@ -64,7 +65,7 @@ def generate_from_outputs(prev_values, platform, value_range=None):
                          value_range[1], tmax)
 
 
-def generate_from_seed(seed, platform, value_range=None):
+def from_seed(seed, platform, value_range=None):
     tmax = _platform_tmax(platform)
     if platform == "windows":
         gen = lcg.generate_from_seed(seed)

@@ -58,7 +58,7 @@ def generate_values(state):
         yield predicted_value >> 1
 
 
-def generate_from_outputs(prev_values):
+def from_outputs(prev_values):
     state = predict_state(prev_values)
     gen = generate_values(state)
     for _ in range(4):
@@ -66,7 +66,7 @@ def generate_from_outputs(prev_values):
     yield from gen
 
 
-def generate_from_seed(seed):
+def from_seed(seed):
     state = [seed]
     for i in range(1, 31):
         state.append((16807 * state[i-1]) % (2**31-1))
