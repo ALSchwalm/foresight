@@ -1,6 +1,6 @@
 from ctypes import c_int32, c_int64, c_uint64
-from predrng import java
-from predrng.java import next_bits
+from foresight import java
+from foresight.java import next_bits
 from itertools import combinations
 
 

@@ -6,7 +6,7 @@ are used to implement the other Random functions (nextInt, nextDouble, etc.)
 Note that it is an error to pass a value for 'bits' that is larger than 32.
 """
 
-from predrng import lcg
+from foresight import lcg
 from ctypes import c_uint32
 
 

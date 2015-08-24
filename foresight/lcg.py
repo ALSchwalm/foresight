@@ -1,5 +1,5 @@
 from math import log, ceil
-from predrng.utils import check_enough_values
+from foresight.utils import check_enough_values
 
 
 def next_state(state, a, c, m, masked_bits):

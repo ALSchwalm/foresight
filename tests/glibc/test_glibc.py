@@ -1,4 +1,4 @@
-from predrng.glibc import rand_r, random
+from foresight.glibc import rand_r, random
 from tests.utils import read_test_data
 
 

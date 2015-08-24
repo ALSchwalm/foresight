@@ -1,4 +1,4 @@
-from predrng.java import nextInt, nextLong
+from foresight.java import nextInt, nextLong
 from tests.utils import read_test_data
 
 

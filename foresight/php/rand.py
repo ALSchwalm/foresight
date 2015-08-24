@@ -1,4 +1,4 @@
-from predrng import lcg, glibc
+from foresight import lcg, glibc
 from math import log, ceil
 
 def _platform_tmax(platform):

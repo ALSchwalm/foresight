@@ -1,4 +1,4 @@
-from predrng.glibc import rand_r
+from foresight.glibc import rand_r
 
 SYMBOLS = "abcdefghijklmnopqrstuvwxyz0123456789"
 

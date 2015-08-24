@@ -2,11 +2,11 @@
 
 import argparse
 from textwrap import dedent
-from predrng import lcg, glibc, php, java, mysql
-from predrng.glibc import random, rand_r
-from predrng.php import rand
-from predrng.java import nextInt, nextLong
-from predrng.mysql import rand
+from foresight import lcg, glibc, php, java, mysql
+from foresight.glibc import random, rand_r
+from foresight.php import rand
+from foresight.java import nextInt, nextLong
+from foresight.mysql import rand
 from itertools import islice
 
 
