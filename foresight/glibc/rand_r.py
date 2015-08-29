@@ -1,5 +1,9 @@
 from math import log
 
+__all__ = [
+    "from_seed",
+    "from_outputs"
+]
 
 def find_components(value):
     r1 = value >> 20                  # 11 most significant bits

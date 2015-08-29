@@ -1,6 +1,11 @@
 from math import log, ceil
 from foresight.utils import check_enough_values
 
+__all__ = [
+    "from_seed",
+    "from_outputs"
+]
+
 
 def next_state(state, a, c, m, masked_bits):
     '''

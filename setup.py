@@ -19,6 +19,11 @@ setup(
     url='https://github.com/ALSchwalm/foresight',
     description='A library for predicting the output of random number generators.',
     long_description=long_description,
-    packages=find_packages('.'),
+    packages=find_packages('.', exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     install_requires=[],
+        entry_points={
+        'console_scripts': [
+            'foresee = foresight.foresee:main',
+        ]
+    }
 )

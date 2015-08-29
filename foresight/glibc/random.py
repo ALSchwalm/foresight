@@ -1,6 +1,11 @@
 
+__all__ = [
+    "from_seed",
+    "from_outputs"
+]
+
 # Credit to http://www.mathstat.dal.ca/~selinger/random/ for a
-# concise explanation of this algorithm
+# concise explanation of the glibc rand_r algorithm
 
 
 class State(object):

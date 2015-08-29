@@ -3,9 +3,14 @@ from foresight import java
 from foresight.java import next_bits
 from itertools import combinations
 
+__all__ = [
+    "from_seed",
+    "from_outputs"
+]
+
 
 def from_seed(seed):
-    gen = java.next_bits.generate_from_seed(seed, 32)
+    gen = java.next_bits.from_seed(seed, 32)
     while True:
         num = c_int64(next(gen) << 32).value
         num += c_int32(next(gen)).value
