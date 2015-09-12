@@ -31,8 +31,8 @@ prior outputs:
     prior_outputs = [int(i) for i in input().split()]
     future_outputs = rand_r.from_outputs(prior_outputs)
 
-    while True:
-        print(next(future_outputs))
+    for output in future_outputs:
+        print(output)
 
 Generally, each module provides the following functions:
 

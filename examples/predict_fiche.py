@@ -9,7 +9,7 @@ def main():
     paths = path_1 + path_2
     outputs = [SYMBOLS.index(letter) for letter in paths]
 
-    gen = rand_r.generate_from_outputs(outputs, len(SYMBOLS))
+    gen = rand_r.from_outputs(outputs, len(SYMBOLS))
     print("Next path:", end="")
     for _ in range(4):
         print(SYMBOLS[next(gen)], end="")
