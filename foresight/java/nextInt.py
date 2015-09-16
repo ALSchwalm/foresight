@@ -9,12 +9,10 @@ __all__ = [
 
 
 def from_seed(seed):
-    gen = java.next_bits.from_seed(seed, 32)
-    while True:
-        yield c_int32(next(gen)).value
+    for prediction in java.next_bits.from_seed(seed, 32):
+        yield c_int32(prediction).value
 
 
 def from_outputs(outputs):
-    gen = java.next_bits.from_outputs(outputs, 32)
-    while True:
-        yield c_int32(next(gen)).value
+    for prediction in java.next_bits.from_outputs(outputs, 32):
+        yield c_int32(prediction).value

@@ -60,8 +60,8 @@ def from_outputs(prev_values, platform, value_range=None):
 
     if value_range is None:
         value_range = [0, tmax]
-    while True:
-        yield rand_range(next(gen), value_range[0],
+    for prediction in gen:
+        yield rand_range(prediction, value_range[0],
                          value_range[1], tmax)
 
 
@@ -74,6 +74,6 @@ def from_seed(seed, platform, value_range=None):
 
     if value_range is None:
         value_range = [0, tmax]
-    while True:
-        yield rand_range(next(gen), value_range[0],
+    for prediction in gen:
+        yield rand_range(prediction, value_range[0],
                          value_range[1], tmax)

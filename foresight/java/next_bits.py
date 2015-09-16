@@ -24,16 +24,16 @@ def generate_values(state, bits):
                               11,
                               281474976710656,
                               0)
-    while True:
-        yield next(gen) >> (48 - bits)
+    for prediction in gen:
+        yield prediction >> (48 - bits)
 
 
 def from_seed(seed, bits):
     seed = (seed ^ 0x5DEECE66D) & ((1 << 48) - 1)
     gen = lcg.from_seed(seed, 25214903917,
                         11, 281474976710656, 0)
-    while True:
-        yield next(gen) >> (48 - bits)
+    for prediction in gen:
+        yield prediction >> (48 - bits)
 
 
 def from_outputs(outputs, bits):
@@ -41,5 +41,5 @@ def from_outputs(outputs, bits):
     gen = lcg.from_outputs(outputs, 25214903917,
                            11, 281474976710656,
                            48-bits)
-    while True:
-        yield next(gen) & ((1 << bits) - 1)
+    for prediction in gen:
+        yield prediction & ((1 << bits) - 1)

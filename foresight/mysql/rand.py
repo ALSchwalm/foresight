@@ -22,7 +22,7 @@ def generate_values(state):
     #   return (((double) rand_st->seed1) / rand_st->max_value_dbl);
     seed1, seed2 = state
 
-    while(True):
+    while True:
         seed1 = (seed1 * 3 + seed2) % 0x3FFFFFFF
         seed2 = (seed1 + seed2 + 33) % 0x3FFFFFFF
         yield seed1 / 0x3FFFFFFF
@@ -35,8 +35,7 @@ def from_outputs(prev_values):
     # only 2 values are needed, so advance past any others we were given
     for _ in prev_values[1:]:
         next(gen)
-    while True:
-        yield next(gen)
+    yield from gen
 
 
 def from_seed(seed):
