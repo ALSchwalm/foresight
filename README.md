@@ -57,6 +57,12 @@ For example, the above script could be performed with the provided CLI like so:
 By default, an infinite stream is generated. The output may be limited to the next
 `N` outputs with `-c N`.
 
+Tests
+=====
+
+Tests can be run with `nose` by first installing the package with `pip install nose`,
+and then running `nosetest` in the project root.
+
 License
 =======
 
