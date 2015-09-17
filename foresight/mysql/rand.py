@@ -1,4 +1,27 @@
+""" Predicts outputs of the MySQL 'rand' function. For example,
+
+    mysql> CREATE TABLE t (i INT);
+    mysql> INSERT INTO t VALUES(1),(2),(3);
+    mysql> SELECT i, RAND() FROM t;
+   +------+------------------+
+   | i    | RAND()           |
+   +------+------------------+
+   |    1 | 0.61914388706828 |
+   |    2 | 0.93845168309142 |
+   |    3 | 0.83482678498591 |
+   +------+------------------+
+
+Given "0.61914388706828" and "0.93845168309142", this module
+`from_outputs` would yield "0.83482678498591".
+
+"""
+
 from ctypes import c_uint32
+
+__all__ = [
+    "from_outputs",
+    "from_seed"
+]
 
 
 def predict_state(values):

@@ -1,9 +1,13 @@
+""" Simulates and predicts outputs from the GNU C Library function `rand_r`.
+"""
+
 from math import log
 
 __all__ = [
     "from_seed",
     "from_outputs"
 ]
+
 
 def find_components(value):
     r1 = value >> 20                  # 11 most significant bits
@@ -105,7 +109,8 @@ def from_outputs(prev_values, output_modulus=None):
         state = predict_state(prev_values, output_modulus)
 
     if state is None:
-        raise RuntimeError("No viable candidate found. Some values may not be consecutive.")
+        raise RuntimeError("No viable candidate found. Some values may"
+                           " not be consecutive.")
     yield from generate_values(state, output_modulus)
 
 

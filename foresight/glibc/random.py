@@ -1,20 +1,31 @@
+""" Predicts and simulates outputs from the GNU C Library 'random' function.
+This is also (generally) the behavior of the 'rand' implementaion under
+glibc.
+
+The algorithm used is well-documented here:
+http://www.mathstat.dal.ca/~selinger/random/
+
+"""
 
 __all__ = [
     "from_seed",
     "from_outputs"
 ]
 
-# Credit to http://www.mathstat.dal.ca/~selinger/random/ for a
-# concise explanation of the glibc rand_r algorithm
-
 
 class State(object):
+    """ A simple type representing a numeric value, where the least
+    significant bit my be currently unknown.
+    """
     def __init__(self, value, lsb):
         self.value = value
         self.lsb = lsb
         self.uncertain = True
 
     def predicted(self):
+        """ Returns the value represented by this state, as though the
+        least significant bit is corrent."""
+
         return (self.value << 1) | self.lsb
 
 

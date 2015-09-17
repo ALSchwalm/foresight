@@ -1,3 +1,11 @@
+""" Provides functions simulating and prediction the output of
+java.util.Random.nextInt. The correct java behavior is well-
+documented here:
+
+https://docs.oracle.com/javase/7/docs/api/java/util/Random.html
+
+"""
+
 from ctypes import c_int32
 from foresight import java
 from foresight.java import next_bits
