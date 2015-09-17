@@ -1,3 +1,16 @@
+""" Provides a general interface fore predicting the output of
+Linear Congruential Generators (LCG).
+
+An LCG outputs values with the following recurrence relation:
+
+        state_(n+1) = a * state_n + c (mod m)
+        value_n = state_n >> masked_bits
+
+Such generators are widely used as platform default random
+number generators.
+
+"""
+
 from math import log, ceil
 from foresight.utils import check_enough_values
 
@@ -11,18 +24,14 @@ def next_state(state, a, c, m, masked_bits):
     '''
     Determine the next value of a linear congruential generator
 
-    An LCG outputs values with the following recurrence relation:
-
-        state_(n+1) = a * state_n + c (mod m)
-        value_n = state_n >> masked_bits
-
     @param state: The current state of the LCG
     @return: The next state, with 'masked_bits' lower order bits removed
     '''
     return ((a * state + c) % m) >> masked_bits
 
 
-def verify_candidate(possible_state, values, a, c, m, masked_bits, operation=None):
+def verify_candidate(possible_state, values, a, c, m, masked_bits,
+                     operation=None):
     for value in values:
         if operation is not None:
             if operation(next_state(possible_state, a, c, m, masked_bits)) == value:

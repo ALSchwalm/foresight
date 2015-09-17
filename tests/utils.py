@@ -3,6 +3,7 @@ from nose.tools import nottest
 
 TestCase = namedtuple('TestCase', ['seed', 'outputs'])
 
+
 @nottest
 def read_test_data(filename):
     def parse_line(line):
