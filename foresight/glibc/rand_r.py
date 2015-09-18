@@ -9,7 +9,15 @@ __all__ = [
 ]
 
 
+MULTIPLIER = 1103515245
+INCREMENT = 12345
+MODULUS = 2**32
+
+
 def find_components(value):
+    """ Extract the three values which have been combined to
+    form the given output.
+    """
     r1 = value >> 20                  # 11 most significant bits
     r2 = (2**10 - 1) & (value >> 10)  # 10 middle bits
     r3 = (2**10 - 1) & value          # 10 least significant bits
@@ -17,23 +25,29 @@ def find_components(value):
 
 
 def verify_candidate(candidate, values, output_modulus):
+    """ For a given possible state (candidate), determine whether
+    it is a possible true state, given a list of outputs and modulus.
+
+    Returns None if candidate is non-viable; otherwise, returns the
+    state after outputing the given values (i.e., the current state).
+    """
     next = candidate
     for value in values:
         r1, r2, r3 = find_components(value)
-        next *= 1103515245
-        next += 12345
-        next %= 2**32
-        r1 = (next // 65536) % 2048
+        next *= MULTIPLIER
+        next += INCREMENT
+        next %= MODULUS
+        r1 = (next // 2**16) % 2**11
 
-        next *= 1103515245
-        next += 12345
-        next %= 2**32
-        r2 = (next // 65536) % 1024
+        next *= MULTIPLIER
+        next += INCREMENT
+        next %= MODULUS
+        r2 = (next // 2**16) % 2**10
 
-        next *= 1103515245
-        next += 12345
-        next %= 2**32
-        r3 = (next // 65536) % 1024
+        next *= MULTIPLIER
+        next += INCREMENT
+        next %= MODULUS
+        r3 = (next // 2**16) % 2**10
 
         output = r1 << 20
         output |= (r2 << 10)
@@ -51,22 +65,22 @@ def predict_state(values, output_modulus=None):
     r1, r2, r3 = find_components(values[0])
 
     for i in range(2**16):
-        if i % 2048 != r1:
+        if i % 2**11 != r1:
             continue
         for j in range(2**16):
-            next = i * 65536 + j
-            if r1 != (next // 65536) % 2048:
+            next = i * 2**16 + j
+            if r1 != (next // 2**16) % 2**11:
                 continue
-            next *= 1103515245
-            next += 12345
-            next %= 2**32
+            next *= MULTIPLIER
+            next += INCREMENT
+            next %= MODULUS
 
-            if r2 != (next // 65536) % 1024:
+            if r2 != (next // 2**16) % 2**10:
                 continue
-            next *= 1103515245
-            next += 12345
-            next %= 2**32
-            if r3 == (next // 65536) % 1024:
+            next *= MULTIPLIER
+            next += INCREMENT
+            next %= MODULUS
+            if r3 == (next // 2**16) % 2**10:
                 state = verify_candidate(next, values[1:], output_modulus)
                 if state is not None:
                     return state
@@ -76,22 +90,22 @@ def generate_values(state, output_modulus=None):
     next = state
 
     while(True):
-        next *= 1103515245
-        next += 12345
-        next %= 2**32
-        result = (next // 65536) % 2048
+        next *= MULTIPLIER
+        next += INCREMENT
+        next %= MODULUS
+        result = (next // 2**16) % 2**11
 
-        next *= 1103515245
-        next += 12345
-        next %= 2**32
+        next *= MULTIPLIER
+        next += INCREMENT
+        next %= MODULUS
         result <<= 10
-        result ^= (next // 65536) % 1024
+        result ^= (next // 2**16) % 2**10
 
-        next *= 1103515245
-        next += 12345
-        next %= 2**32
+        next *= MULTIPLIER
+        next += INCREMENT
+        next %= MODULUS
         result <<= 10
-        result ^= (next // 65536) % 1024
+        result ^= (next // 2**16) % 2**10
         if not output_modulus:
             yield result
         else:
