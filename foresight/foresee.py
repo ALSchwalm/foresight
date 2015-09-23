@@ -178,12 +178,12 @@ def setup_lcg_parser(sp):
 
 
 def main():
-    parser = argparse.ArgumentParser(prog='predict_rng', description="""
+    parser = argparse.ArgumentParser(prog='foresee', description="""
     Given outputs from a random number generator (glibc's rand_r, PHP rand, etc),
     predict_rng predicts the future outputs. Alternately, predict_rng can
     be passed the seed, which will be used to produce the same values that
     would be returned from the random number generator.""",
-                                     epilog="See additional help for a command with: predict_rng <command> -h")
+                                     epilog="See additional help for a command with: foresee <command> -h")
 
     sp = parser.add_subparsers(dest="command", title="Valid Commands")
     sp.required = True
