@@ -17,6 +17,7 @@ setup(
     version='0.1',
     license='LICENSE',
     url='https://github.com/ALSchwalm/foresight',
+    download_url='https://github.com/ALSchwalm/foresight/tarball/0.1',
     description='A library for predicting the output of random number generators.',
     long_description=long_description,
     packages=find_packages('.', exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
@@ -25,5 +26,6 @@ setup(
         'console_scripts': [
             'foresee = foresight.foresee:main',
         ]
-    }
+    },
+    keywords=['predict', 'random', 'rng']
 )
