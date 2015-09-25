@@ -1,4 +1,11 @@
-from foresight import msvc, glibc, lcg
+""" Predicts and simulates outputs from the PHP 'rand' function. This
+is generally a call to the corresponding 'rand' of the platform C
+implementation.
+"""
+
+import foresight.glibc.random
+import foresight.msvc.rand
+from foresight import lcg
 from math import log, ceil
 
 
@@ -12,9 +19,9 @@ def _platform_tmax(platform):
 def predict_state(values, platform, value_range=None):
     if value_range is None:
         if platform == "windows":
-            return msvc.rand.predict_state(values)
+            return foresight.msvc.rand.predict_state(values)
         elif platform == "linux":
-            return glibc.random.predict_state(values)
+            return foresight.glibc.random.predict_state(values)
     else:
         tmax = _platform_tmax(platform)
         min = value_range[0]
@@ -54,9 +61,9 @@ def from_outputs(prev_values, platform, value_range=None):
 
     tmax = _platform_tmax(platform)
     if platform == "windows":
-        gen = msvc.rand.generate_values(state)
+        gen = foresight.msvc.rand.generate_values(state)
     elif platform == "linux":
-        gen = glibc.random.generate_values(state)
+        gen = foresight.glibc.random.generate_values(state)
 
     if value_range is None:
         value_range = [0, tmax]
@@ -68,9 +75,9 @@ def from_outputs(prev_values, platform, value_range=None):
 def from_seed(seed, platform, value_range=None):
     tmax = _platform_tmax(platform)
     if platform == "windows":
-        gen = msvc.rand.from_seed(seed)
+        gen = foresight.msvc.rand.from_seed(seed)
     elif platform == "linux":
-        gen = glibc.random.from_seed(seed)
+        gen = foresight.glibc.random.from_seed(seed)
 
     if value_range is None:
         value_range = [0, tmax]
