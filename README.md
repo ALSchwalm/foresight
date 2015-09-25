@@ -1,8 +1,8 @@
 
-Forsight
-========
+Foresight
+=========
 
-`forsight` is a python library for predicting the output of random number
+`foresight` is a python library for predicting the output of random number
 generators across a variety of platforms and languages including:
 
 - glibc
@@ -16,7 +16,7 @@ library that provides a CLI interface.
 Installation
 ============
 
-To install `forsight`, clone this repository and run `python setup.py insatll`.
+To install `foresight`, clone this repository and run `python setup.py install`.
 
 Library Usage
 =============
