@@ -50,7 +50,7 @@ Command line usage of the library has the following general form:
 
     foresee <platform> <function> [<options>]
 
-For example, the above script could be performed with the provided CLI like so:
+For example, the above script is equivalent to the following `foresee` command:
 
     foresee glibc rand_r -o <the prior outputs>
 
