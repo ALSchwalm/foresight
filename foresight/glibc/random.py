@@ -1,5 +1,5 @@
 """ Predicts and simulates outputs from the GNU C Library 'random' function.
-This is also (generally) the behavior of the 'rand' implementaion under
+This is also (generally) the behavior of the 'rand' implementation under
 glibc.
 
 The algorithm used is well-documented here:
@@ -24,7 +24,7 @@ class State(object):
 
     def predicted(self):
         """ Returns the value represented by this state, as though the
-        least significant bit is corrent."""
+        least significant bit is correct."""
 
         return (self.value << 1) | self.lsb
 
