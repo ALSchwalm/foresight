@@ -27,10 +27,7 @@ __all__ = [
 def predict_state(values):
     values = [int(round(v * 0x3FFFFFFF, 0)) for v in values]
     seed1 = values[0]
-    for i in range(2**30):
-        if (seed1 * 3 + i) % 0x3FFFFFFF == values[1]:
-            seed2 = i
-            break
+    seed2 = (values[1] - seed1 * 3) % 0x3FFFFFFF
     return [seed1, seed2]
 
 
