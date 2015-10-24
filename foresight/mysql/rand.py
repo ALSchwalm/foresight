@@ -27,7 +27,7 @@ __all__ = [
 def predict_state(values):
     values = [int(round(v * 0x3FFFFFFF, 0)) for v in values]
     seed1 = values[0]
-    seed2 = 0x3FFFFFFF - (seed1 * 3 - values[1]) % 0x3FFFFFFF
+    seed2 = (values[1] - seed1 * 3) % 0x3FFFFFFF
     return [seed1, seed2]
 
 
