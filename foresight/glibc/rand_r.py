@@ -29,7 +29,7 @@ def verify_candidate(candidate, values, output_modulus):
     it is a possible true state, given a list of outputs and modulus.
 
     Returns None if candidate is non-viable; otherwise, returns the
-    state after outputing the given values (i.e., the current state).
+    state after outputting the given values (i.e., the current state).
     """
     next = candidate
     for value in values:
