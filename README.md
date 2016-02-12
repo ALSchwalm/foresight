@@ -11,7 +11,7 @@ generators across a variety of platforms and languages including:
 - Java
 
 This repository also contains a simple wrapper (called `foresee`) around this
-library that provides a CLI interface.
+library that provides a CLI.
 
 Installation
 ============
