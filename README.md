@@ -9,6 +9,7 @@ generators across a variety of platforms and languages including:
 - MSVC
 - PHP
 - Java
+- MySQL
 
 This repository also contains a simple wrapper (called `foresee`) around this
 library that provides a CLI.
