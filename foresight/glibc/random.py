@@ -41,12 +41,9 @@ def predict_state(values):
         predicted_value = (predicted_value % 2**32) >> 1
 
         if value.value == predicted_value:
-            if not values[i-31].uncertain:
+            if not values[i-31].uncertain and values[i-31].lsb:
+                values[i-3].lsb = 0
                 values[i-3].uncertain = False
-                if values[i-31].lsb:
-                    values[i-3].lsb = 0
-                else:
-                    values[i-3].lsb = 1
         elif value.value == predicted_value+1:
             values[i-3].lsb = 1
             values[i-3].uncertain = False
